@@ -766,17 +766,17 @@ static const AP_Scheduler::Task scheduler_tasks[] PROGMEM = {
     { stabilize,              1,   3500 },
     { set_servos,             1,   1600 },
     { read_control_switch,    7,   1000 },
-    { gcs_retry_deferred,     1,   1000 },
-    { update_GPS_50Hz,        1,   2500 },
-    { update_GPS_10Hz,        5,   2500 }, // 10
+    //jan { gcs_retry_deferred,     1,   1000 },
+    //jan { update_GPS_50Hz,        1,   2500 },
+    //jan { update_GPS_10Hz,        5,   2500 }, // 10
     { navigate,               5,   3000 },
     { update_compass,         5,   1200 },
     { read_airspeed,          5,   1200 },
     { update_alt,             5,   3400 },
     { adjust_altitude_target, 5,   1000 },
     { obc_fs_check,           5,   1000 },
-    { gcs_update,             1,   1700 },
-    { gcs_data_stream_send,   1,   3000 },
+    //jan { gcs_update,             1,   1700 },
+    //jan { gcs_data_stream_send,   1,   3000 },
     { update_events,		  1,   1500 }, // 20
     { check_usb_mux,          5,    300 },
     { read_battery,           5,   1000 },
@@ -785,25 +785,31 @@ static const AP_Scheduler::Task scheduler_tasks[] PROGMEM = {
     { update_notify,          1,    300 },
     { read_rangefinder,       1,    500 },
 #if OPTFLOW == ENABLED
-    { update_optical_flow,    1,    500 },
+    //jan { update_optical_flow,    1,    500 },
 #endif
-    { one_second_loop,       50,   1000 },
+    //jan { one_second_loop,       50,   1000 },
     { check_long_failsafe,   15,   1000 },
     { read_receiver_rssi,     5,   1000 },
     { airspeed_ratio_update, 50,   1000 }, // 30
     { update_mount,           1,   1500 },
-    { log_perf_info,        500,   1000 },
+    //jan { log_perf_info,        500,   1000 },
     { compass_save,        3000,   2500 },
-    { update_logging1,        5,   1700 },
-    { update_logging2,        5,   1700 },
+    //jan { update_logging1,        5,   1700 },
+    //jan { update_logging2,        5,   1700 },
 #if FRSKY_TELEM_ENABLED == ENABLED
-    { telemetry_send,        10,    100 },	
+    //jan { telemetry_send,        10,    100 },	
 #endif
-    { terrain_update,         5,    500 },
+    //jan { terrain_update,         5,    500 },
+    { userHook_50Hz,         1,    500 }
 };
 
 // setup the var_info table
 AP_Param param_loader(var_info);
+
+
+void userHook_50Hz() {
+     cliSerial->printf_P(PSTR("Gruess Dich" ));
+}
 
 void setup() {
     cliSerial = hal.console;
