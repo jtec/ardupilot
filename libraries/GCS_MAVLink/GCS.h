@@ -149,7 +149,6 @@ public:
     */
     static void send_statustext_all(const prog_char_t *msg);
 
-private:
     void        handleMessage(mavlink_message_t * msg);
 
     /// The stream we are communicating over
@@ -205,6 +204,7 @@ private:
 
     // saveable rate of each stream
     AP_Int16        streamRates[NUM_STREAMS];
+private:
 
     // number of 50Hz ticks until we next send this stream
     uint8_t         stream_ticks[NUM_STREAMS];

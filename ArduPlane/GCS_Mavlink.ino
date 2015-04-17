@@ -926,7 +926,8 @@ GCS_MAVLINK::data_stream_send(void)
 
     if (stream_trigger(STREAM_EXTRA1)) {
         send_message(MSG_ATTITUDE);
-        send_message(MSG_SIMSTATE);
+        // send_message(MSG_RAW_IMU1);
+        //send_message(MSG_SIMSTATE);
     }
 
     if (gcs_out_of_time) return;

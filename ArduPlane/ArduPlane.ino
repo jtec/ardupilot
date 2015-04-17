@@ -31,6 +31,9 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+
+
+
 #include <AP_HAL.h>
 #include <AP_Common.h>
 #include <AP_Progmem.h>
@@ -55,6 +58,7 @@
 #include <AP_Terrain.h>
 
 #include <APM_OBC.h>
+
 #include <APM_Control.h>
 #include <AP_AutoTune.h>
 #include <GCS.h>
@@ -766,17 +770,17 @@ static const AP_Scheduler::Task scheduler_tasks[] PROGMEM = {
     { stabilize,              1,   3500 },
     { set_servos,             1,   1600 },
     { read_control_switch,    7,   1000 },
-    //jan { gcs_retry_deferred,     1,   1000 },
-    //jan { update_GPS_50Hz,        1,   2500 },
-    //jan { update_GPS_10Hz,        5,   2500 }, // 10
+    { gcs_retry_deferred,     1,   1000 },
+    { update_GPS_50Hz,        1,   2500 },
+    { update_GPS_10Hz,        5,   2500 }, // 10
     { navigate,               5,   3000 },
     { update_compass,         5,   1200 },
     { read_airspeed,          5,   1200 },
     { update_alt,             5,   3400 },
     { adjust_altitude_target, 5,   1000 },
     { obc_fs_check,           5,   1000 },
-    //jan { gcs_update,             1,   1700 },
-    //jan { gcs_data_stream_send,   1,   3000 },
+    { gcs_update,             1,   1700 },
+    { gcs_data_stream_send, 0.5,   3000 },
     { update_events,		  1,   1500 }, // 20
     { check_usb_mux,          5,    300 },
     { read_battery,           5,   1000 },
@@ -787,7 +791,7 @@ static const AP_Scheduler::Task scheduler_tasks[] PROGMEM = {
 #if OPTFLOW == ENABLED
     //jan { update_optical_flow,    1,    500 },
 #endif
-    //jan { one_second_loop,       50,   1000 },
+    { one_second_loop,       50,   1000 },
     { check_long_failsafe,   15,   1000 },
     { read_receiver_rssi,     5,   1000 },
     { airspeed_ratio_update, 50,   1000 }, // 30
@@ -797,19 +801,41 @@ static const AP_Scheduler::Task scheduler_tasks[] PROGMEM = {
     //jan { update_logging1,        5,   1700 },
     //jan { update_logging2,        5,   1700 },
 #if FRSKY_TELEM_ENABLED == ENABLED
-    //jan { telemetry_send,        10,    100 },	
+    { telemetry_send,        10,    100 },	
 #endif
     //jan { terrain_update,         5,    500 },
-    { userHook_50Hz,         1,    500 }
+    { userHook_1Hz,         50,    500 },
+    { userHook_10Hz,         5,    500 },
+    { userHook_50Hz,         1,    500 },
+    { userHook_100Hz,       0.5,   500 }
 };
 
 // setup the var_info table
 AP_Param param_loader(var_info);
 
 
-void userHook_50Hz() {
+//Martin Define userHooks at different sample rates to spray relevant data:
+void userHook_1Hz() {
+     for(int igcs=0; igcs<2; igcs++){
+       for(int istream=0; istream<gcs[igcs].NUM_STREAMS; istream++){
+         gcs[igcs].streamRates[istream] = 0;
+       }
+       gcs[igcs].streamRates[gcs[igcs].STREAM_EXTRA1] = 50;
+       gcs[igcs].streamRates[gcs[igcs].STREAM_POSITION] = 10;       
+   }
+     //gcs_send_message(MSG_HEARTBEAT);
+     gcs_send_message(MSG_HEARTBEAT);
+     // Spray some text - to check if we enter the loop:
      cliSerial->printf_P(PSTR("Gruess Dich" ));
 }
+void userHook_10Hz() {
+}
+void userHook_50Hz() {
+}
+ void userHook_100Hz() {
+}
+
+
 
 void setup() {
     cliSerial = hal.console;
@@ -864,6 +890,11 @@ void loop()
     }
     scheduler.run(remaining);
 }
+
+
+
+
+
 
 // update AHRS system
 static void ahrs_update()

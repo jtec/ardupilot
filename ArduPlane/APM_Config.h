@@ -22,3 +22,11 @@
 #define OPTFLOW               DISABLED            // disable optical flow sensor to save 5K of flash space
 #define FRSKY_TELEM_ENABLED   DISABLED            // disable FRSky telemetry
 
+
+
+ //Use the telemetry port for the Debug Terminal interface:
+ //Martin Selecting the GCS port:
+ #define GCS_PORT            3
+
+ //Set the baud rate for the telemetry port to match your XBee setup:
+ #define SERIAL3_BAUD        57600
